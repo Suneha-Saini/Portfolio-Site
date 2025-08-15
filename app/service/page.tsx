@@ -1,9 +1,10 @@
-"use client"
+  "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Code, Zap, BarChart3, Brain, Globe, Send } from "lucide-react"
+import Link from "next/link"
 
 export default function ServicesPage() {
   const services = [
@@ -58,11 +59,11 @@ export default function ServicesPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-black text-white py-12 sm:py-16">
+    <div className="min-h-screen bg-black text-white py-12 sm:py-16 cursor-default">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Centered Hero Section */}
         <div className="text-center space-y-6 mb-16 sm:mb-20">
-          <Badge className="bg-gradient-to-r from-cyan-500 to-purple-600 text-white">
+          <Badge className="bg-gradient-to-r from-cyan-500 to-purple-600 text-white hover:bg-gradient-to-r hover:from-cyan-500 hover:to-purple-600">
             Professional Services
           </Badge>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold">
@@ -90,13 +91,13 @@ export default function ServicesPage() {
               Comprehensive solutions to empower your business with technology
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 justify-items-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 items-stretch justify-items-center">
             {services.map((service, index) => {
               const IconComponent = service.icon
               return (
                 <Card
                   key={index}
-                  className="bg-gray-900 border border-gray-800 hover:border-cyan-500 transition-all duration-300 w-full max-w-sm"
+                  className="bg-gray-900 border border-gray-800 hover:border-cyan-500 transition-all duration-300 w-full max-w-sm flex flex-col min-h-[400px]"
                 >
                   <CardHeader className="p-4 sm:p-6">
                     <div className="flex items-center space-x-2 sm:space-x-3">
@@ -106,14 +107,14 @@ export default function ServicesPage() {
                       <CardTitle className="text-lg sm:text-xl text-white">{service.title}</CardTitle>
                     </div>
                     <div className="mt-2">
-                      <Badge variant="secondary" className="bg-gray-800 text-xs sm:text-sm text-gray-400">
+                      <Badge variant="secondary" className="bg-gray-800 text-xs sm:text-sm text-gray-400 hover:bg-gray-800 hover:text-gray-400">
                         {service.badge}
                       </Badge>
                     </div>
                   </CardHeader>
-                  <CardContent className="p-4 sm:p-6 space-y-4">
+                  <CardContent className="p-4 sm:p-6 space-y-4 flex flex-col flex-1 h-full">
                     <p className="text-gray-300 text-sm sm:text-base">{service.description}</p>
-                    <div>
+                    <div className="flex-1">
                       <h4 className="text-white font-semibold text-sm sm:text-base mb-2">Highlights</h4>
                       <ul className="space-y-2 text-gray-400 text-sm">
                         {service.highlights.map((highlight, hIndex) => (
@@ -126,7 +127,7 @@ export default function ServicesPage() {
                     </div>
                     <Button
                       variant="outline"
-                      className="w-full border-cyan-500 text-cyan-400 hover:bg-cyan-500/10"
+                      className="w-full border-cyan-500 text-cyan-400 hover:bg-cyan-500/10 mt-auto"
                     >
                       Learn More
                     </Button>
@@ -145,10 +146,12 @@ export default function ServicesPage() {
           <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto mb-6">
             Let’s collaborate to build innovative solutions that drive efficiency and growth. Contact me today to discuss your project needs.
           </p>
-          <Button className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700">
-            <Send className="mr-2 h-4 w-4" />
-            Get in Touch
-          </Button>
+          <Link href="/contact">
+            <Button className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700">
+              <Send className="mr-2 h-4 w-4" />
+              Get in Touch
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

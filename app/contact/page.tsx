@@ -29,13 +29,13 @@ export default function ContactPage() {
     {
       icon: Phone,
       title: "Phone",
-      value: "+91 9914980908", // Replace with your actual phone number
-      href: "tel:+919914980908", // Replace with your actual phone number
+      value: "+91 9914980908",
+      href: "tel:+919914980908",
     },
     {
       icon: MapPin,
       title: "Location",
-      value: "Amritsar, India", // Replace with your location if different
+      value: "Amritsar, India",
       href: "#",
     },
   ]
@@ -93,7 +93,7 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white py-12 sm:py-16">
+    <div className="min-h-screen bg-black text-white py-12 sm:py-16 cursor-default">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12 sm:mb-16">
@@ -129,7 +129,7 @@ export default function ContactPage() {
                         value={formData.firstName}
                         onChange={handleChange}
                         placeholder="John"
-                        className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 w-full"
+                        className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 w-full cursor-text"
                       />
                     </div>
                     <div>
@@ -142,7 +142,7 @@ export default function ContactPage() {
                         value={formData.lastName}
                         onChange={handleChange}
                         placeholder="Doe"
-                        className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 w-full"
+                        className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 w-full cursor-text"
                       />
                     </div>
                   </div>
@@ -157,7 +157,7 @@ export default function ContactPage() {
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="john.doe@example.com"
-                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 w-full"
+                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 w-full cursor-text"
                     />
                   </div>
                   <div>
@@ -170,7 +170,7 @@ export default function ContactPage() {
                       value={formData.subject}
                       onChange={handleChange}
                       placeholder="Project Discussion"
-                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 w-full"
+                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 w-full cursor-text"
                     />
                   </div>
                   <div>
@@ -184,7 +184,7 @@ export default function ContactPage() {
                       onChange={handleChange}
                       placeholder="Tell me about your project requirements, timeline, and any specific questions you have..."
                       rows={6}
-                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 w-full"
+                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 w-full cursor-text"
                     />
                   </div>
                   <Button
@@ -285,5 +285,3 @@ export default function ContactPage() {
     </div>
   )
 }
-
-

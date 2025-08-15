@@ -62,7 +62,7 @@ export default function HomePage() {
   ]
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white cursor-default">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -81,13 +81,15 @@ export default function HomePage() {
               Passionate about building innovative solutions that bridge business needs with modern technology. I specialize in Power Platform, Python, and React development — crafting intelligent dashboards, automated workflows, and data-driven applications that enhance efficiency and deliver real business impact.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700"
-              >
-                <Download className="mr-2 h-4 w-4" />
-                Download Resume
-              </Button>
+              <Link href="/Resume/Suneha-Saini-Resume.pdf" target="_blank" rel="noopener noreferrer">
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700"
+                >
+                  <Download className="mr-2 h-4 w-4" />
+                  Download Resume
+                </Button>
+              </Link>
               <Button
                 variant="outline"
                 size="lg"
@@ -143,8 +145,8 @@ export default function HomePage() {
                 <Card key={index} className="bg-gray-900 border-gray-800 hover:border-cyan-500 transition-colors group">
                   <CardContent className="p-6 text-center">
                     <IconComponent className="h-8 w-8 mx-auto mb-3 text-cyan-400 group-hover:text-cyan-300 transition-colors" />
-                    <h3 className="font-semibold text-white mb-1">{skill.name}</h3>
-                    <Badge variant="secondary" className="text-xs bg-gray-800 text-gray-400">
+                    <h3 className="font-semibold text-white mb-1 cursor-default group-hover:cursor-default">{skill.name}</h3>
+                    <Badge variant="secondary" className="text-xs bg-gray-800 text-gray-400 group-hover:bg-gray-800 group-hover:text-gray-400 cursor-default group-hover:cursor-default">
                       {skill.category}
                     </Badge>
                   </CardContent>
@@ -155,7 +157,7 @@ export default function HomePage() {
         </div>
       </section>
 
-    {/* project Section */}
+      {/* Project Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-950">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -163,7 +165,7 @@ export default function HomePage() {
               Featured <span className="text-cyan-400">Projects</span>
             </h2>
             <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-              A showcase of my recent work in Power Platform development and Python applications.
+              A showcase of my recent work in Power Platform development and Python applications and React Development.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -173,15 +175,17 @@ export default function HomePage() {
                 className="bg-gray-900 border-gray-800 hover:border-cyan-500 transition-all duration-300 group"
               >
                 <CardHeader>
-                  <CardTitle className="text-white group-hover:text-cyan-400 transition-colors">
+                  <CardTitle className="text-white group-hover:text-white cursor-default group-hover:cursor-default">
                     {project.title}
                   </CardTitle>
-                  <CardDescription className="text-gray-400">{project.description}</CardDescription>
+                  <CardDescription className="text-gray-400 group-hover:text-gray-400 cursor-default group-hover:cursor-default">
+                    {project.description}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2 mb-4">
                     {project.tools.map((tool, toolIndex) => (
-                      <Badge key={toolIndex} variant="secondary" className="bg-gray-800 text-gray-300">
+                      <Badge key={toolIndex} variant="secondary" className="bg-gray-800 text-gray-300 group-hover:bg-gray-800 group-hover:text-gray-300 cursor-default group-hover:cursor-default">
                         {tool}
                       </Badge>
                     ))}
