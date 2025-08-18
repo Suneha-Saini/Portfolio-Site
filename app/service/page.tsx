@@ -61,7 +61,6 @@ export default function ServicesPage() {
   return (
     <div className="min-h-screen bg-black text-white py-12 sm:py-16 cursor-default">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Centered Hero Section */}
         <div className="text-center space-y-6 mb-16 sm:mb-20">
           <Badge className="bg-gradient-to-r from-cyan-500 to-purple-600 text-white hover:bg-gradient-to-r hover:from-cyan-500 hover:to-purple-600">
             Professional Services

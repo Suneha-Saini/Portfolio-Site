@@ -25,8 +25,8 @@ export default function AboutPage() {
         { name: "CSS", level: 92, icon: Code},
         { name: "JavaScript", level: 90, icon: Code },
         { name: "React.js", level: 88, icon: Code },
-        { name: "Python", level: 92, icon: Code},
-        { name: "SQL", level: 85, icon: Database },
+        { name: "Python", level: 85, icon: Code},
+        { name: "SQL", level: 80, icon: Database },
       ],
       category: "Programming",
     },
@@ -107,7 +107,7 @@ export default function AboutPage() {
         modules_developed: "10+",
         automation_flows_created: "20+",
         UX_improvement: "Significantly increased client usability scores",
-        api_integrations: "10+"
+        api_integrations: "20+"
       }
     }
   ]
@@ -193,6 +193,28 @@ export default function AboutPage() {
         project_usefulness: "Applied in academic and student council events"
       }
     }
+  ]
+
+  const extracurricular = [
+    {
+      title: "NCC 'C' Certificate Holder",
+      description: "Achieved the highest level certification in National Cadet Corps, demonstrating leadership, discipline, and commitment.",
+      year: "2024",
+      issuer: "National Cadet Corps",
+    },
+    {
+      title: "NCC Best Cadet",
+      description: "Recognized as the best cadet for outstanding performance in drills, leadership, and community service.",
+      year: "2024",
+      issuer: "National Cadet Corps",
+    },
+    {
+      title: "Student Council Member",
+      description: "Served as a key member in the student council, organizing events, representing student interests, and fostering campus community.",
+      period: "2023-2025",
+      issuer: "Khalsa College of Engineering & Technology",
+    },
+    // Add more if needed
   ]
 
   const education = [
@@ -526,13 +548,14 @@ export default function AboutPage() {
             </div>
 
             <Tabs value={activeExperienceTab} onValueChange={setActiveExperienceTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 bg-gray-900 p-1 rounded-lg mb-4">
+              <TabsList className="grid w-full grid-cols-4 bg-gray-900 p-1 rounded-lg mb-4">
                 <TabsTrigger
                   value="professional"
                   className="rounded-md text-sm sm:text-base px-2 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-600"
                 >
                   Professional Journey
                 </TabsTrigger>
+                
                 <TabsTrigger
                   value="freelance"
                   className="rounded-md text-sm sm:text-base px-2 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-600"
@@ -544,6 +567,12 @@ export default function AboutPage() {
                   className="rounded-md text-sm sm:text-base px-2 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-600"
                 >
                   Internships
+                </TabsTrigger>
+                <TabsTrigger
+                  value="extracurricular"
+                  className="rounded-md text-sm sm:text-base px-2 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-600"
+                >
+                  Extracurricular
                 </TabsTrigger>
               </TabsList>
 
@@ -641,8 +670,7 @@ export default function AboutPage() {
               </TabsContent>
 
               <TabsContent value="freelance">
-                <div className="text到来
-text-center mb-6 sm:mb-8">
+                <div className="text-center mb-6 sm:mb-8">
                   <h3 className="text-xl sm:text-2xl font-bold mb-2 text-white">Freelance & Personal Ventures</h3>
                   <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
                     Independent projects and freelance work showcasing my initiative and skills.
@@ -821,6 +849,27 @@ text-center mb-6 sm:mb-8">
                             ))}
                           </div>
                         </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="extracurricular">
+                <div className="text-center mb-6 sm:mb-8">
+                  <h3 className="text-xl sm:text-2xl font-bold mb-2 text-white">Extracurricular Activities & Leadership Roles</h3>
+                  <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
+                    Leadership and extracurricular engagements that built my holistic skills.
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                  {extracurricular.map((act, index) => (
+                    <Card key={index} className="bg-gray-900 border border-gray-800 hover:border-cyan-500 transition-colors">
+                      <CardContent className="p-4 sm:p-6">
+                        <h4 className="text-sm sm:text-base font-semibold text-white mb-1 sm:mb-2">{act.title}</h4>
+                        <p className="text-cyan-400 font-medium text-xs sm:text-base mb-1 sm:mb-2">{act.issuer}</p>
+                        <p className="text-gray-400 text-xs sm:text-sm mb-1 sm:mb-2">{act.year || act.period}</p>
+                        <p className="text-gray-300 text-sm">{act.description}</p>
                       </CardContent>
                     </Card>
                   ))}
