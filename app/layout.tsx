@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   title: "Suneha - Power Platform Developer | Python Enthusiast",
   description:
     "Power Platform Developer and Python Enthusiast crafting innovative solutions that bridge business needs with cutting-edge technology.",
-    generator: 'v0.dev'
+    generator: 'Suneha-Saini'
 }
 
 export default function RootLayout({

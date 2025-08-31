@@ -407,19 +407,19 @@ export default function AboutPage() {
     </div>
     <p className="text-base sm:text-lg text-gray-300 leading-relaxed">
       Hello! I'm Suneha, a passionate{" "}
-      <span className="text-cyan-400 font-semibold">Power Platform Developer</span>,{" "}
-      <span className="text-purple-400 font-semibold">Python enthusiast</span>, and{" "}
-      <span className="text-pink-400 font-semibold">React interface designer</span> with hands-on experience in building smart, data-driven solutions.
+      <span className="text-pink-400 font-semibold">React interface designer</span>,{" "}
+      <span className="text-cyan-400 font-semibold">Power Platform Developer</span>, and{" "}
+      <span className="text-purple-400 font-semibold">Python enthusiast</span>{" "} with hands-on experience in building smart, data-driven solutions.
     </p>
     <p className="text-base sm:text-lg text-gray-300 leading-relaxed">
-      I specialize in developing low-code business applications using{" "}
+      I specialize in building responsive and dynamic web applications using{" "}
+      <span className="text-pink-300 font-semibold">React</span>{" "}along with developing low-code business applications on {" "}
       <span className="text-cyan-300 font-semibold">Power Apps</span>,{" "}
       <span className="text-cyan-300 font-semibold">Power Automate</span>,{" "}
       <span className="text-cyan-300 font-semibold">Power BI</span>, and{" "}
-      <span className="text-cyan-300 font-semibold">Dataverse</span>, along with{" "}
+      <span className="text-cyan-300 font-semibold">Dataverse</span>, along with that I also work on{" "}
       <span className="text-purple-300 font-semibold">Python-based automation</span> and{" "}
-      <span className="text-purple-300 font-semibold">AI/ML integration</span>. I also design responsive interfaces using{" "}
-      <span className="text-pink-300 font-semibold">React</span> and connect them with backend systems and APIs.
+      <span className="text-purple-300 font-semibold">AI/ML integration</span>. creating end-to-end solutions that connect modern interfaces with backend systems and APIs.{" "}
     </p>
     <p className="text-base sm:text-lg text-gray-300 leading-relaxed">
       In the past year, I’ve worked on real-world projects that helped automate processes, improve reporting, and deliver efficient, scalable digital experiences.

@@ -68,7 +68,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
             <div className="space-y-4">
-              <p className="text-cyan-400 text-sm font-medium tracking-wider uppercase">Power Platform Developer</p>
+              <p className="text-cyan-400 text-sm font-medium tracking-wider uppercase">React Developer</p>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
                 Hi, I'm{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-600">
@@ -78,8 +78,8 @@ export default function HomePage() {
               <p className="text-xl text-gray-300 font-medium">Web Developer | Power Platform Developer</p>
             </div>
             <p className="text-lg text-gray-400 leading-relaxed max-w-2xl">
-              Passionate about building innovative solutions that bridge business needs with modern technology. I specialize in Power Platform, Python, and React development — crafting intelligent dashboards, automated workflows, and data-driven applications that enhance efficiency and deliver real business impact.
-            </p>
+Passionate about building innovative solutions that bridge business needs with modern technology. I specialize in React development, Power Platform, and Python development — crafting intelligent dashboards, automated workflows, data-driven applications, and user-friendly apps that enhance efficiency and deliver real business impact.
+</p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/Resume/Suneha-Saini-Resume.pdf" target="_blank" rel="noopener noreferrer">
                 <Button
