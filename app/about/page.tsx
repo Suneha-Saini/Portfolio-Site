@@ -446,6 +446,10 @@ export default function AboutPage() {
         <div className="text-xl sm:text-2xl font-bold text-blue-400">15+</div>
         <div className="text-xs sm:text-sm text-gray-400">APIs Integrated</div>
       </div>
+        <div className="text-center">
+        <div className="text-xl sm:text-2xl font-bold text-blue-400">5+</div>
+        <div className="text-xs sm:text-sm text-gray-400">APIs Created</div>
+      </div>
     </div>
   </div>
 </div>
