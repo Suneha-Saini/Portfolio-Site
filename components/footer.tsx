@@ -19,7 +19,7 @@ export default function Footer() {
   ]
 
   return (
-    <footer className="bg-gray-950 border-t border-gray-800">
+    <footer className="bg-gray-100 dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
@@ -34,7 +34,7 @@ export default function Footer() {
                 priority
               />
             </Link>
-            <p className="text-gray-400 mb-4 max-w-md">
+            <p className="text-gray-600 dark:text-gray-400 mb-4 max-w-md">
               Power Platform Developer | React & Python Enthusiast | Delivering AI-integrated, data-driven business solutions.
             </p>
             <div className="flex space-x-4">
@@ -44,7 +44,7 @@ export default function Footer() {
                   <Link
                     key={social.name}
                     href={social.href}
-                    className="text-gray-400 hover:text-cyan-400 transition-colors"
+                    className="text-gray-500 dark:text-gray-400 hover:text-cyan-500 transition-colors"
                     aria-label={social.name}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -58,11 +58,11 @@ export default function Footer() {
 
           {/* Navigation */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Navigation</h3>
+            <h3 className="text-gray-900 dark:text-white font-semibold mb-4">Navigation</h3>
             <ul className="space-y-2">
               {navigation.map((item) => (
                 <li key={item.name}>
-                  <Link href={item.href} className="text-gray-400 hover:text-cyan-400 transition-colors">
+                  <Link href={item.href} className="text-gray-600 dark:text-gray-400 hover:text-cyan-500 transition-colors">
                     {item.name}
                   </Link>
                 </li>
@@ -72,8 +72,8 @@ export default function Footer() {
 
           {/* Services */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Services</h3>
-            <ul className="space-y-2 text-gray-400">
+            <h3 className="text-gray-900 dark:text-white font-semibold mb-4">Services</h3>
+            <ul className="space-y-2 text-gray-600 dark:text-gray-400">
               <li>Power Apps Development</li>
               <li>React App Development</li>
               <li>Power Automate Solutions</li>
@@ -83,10 +83,10 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8">
+        <div className="border-t border-gray-200 dark:border-gray-800 mt-8 pt-8">
           <div className="flex flex-col sm:flex-row justify-between items-center">
-            <p className="text-gray-400 text-sm">© {currentYear} Suneha. All rights reserved.</p>
-            <p className="text-gray-400 text-sm flex items-center mt-2 sm:mt-0">
+            <p className="text-gray-600 dark:text-gray-400 text-sm">© {currentYear} Suneha. All rights reserved.</p>
+            <p className="text-gray-600 dark:text-gray-400 text-sm flex items-center mt-2 sm:mt-0">
               Made with <Heart className="h-4 w-4 text-red-500 mx-1" /> using Next.js & Tailwind CSS
             </p>
           </div>

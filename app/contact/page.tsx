@@ -17,7 +17,7 @@ export default function ContactPage() {
     message: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitStatus, setSubmitStatus] = useState(null)
+  const [submitStatus, setSubmitStatus] = useState<"success" | "error" | null>(null)
 
   const contactInfo = [
     {
@@ -55,17 +55,17 @@ export default function ContactPage() {
     },
   ]
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const validateEmail = (email) => {
+  const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     return emailRegex.test(email)
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
     setSubmitStatus(null)
@@ -93,14 +93,14 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white py-12 sm:py-16 cursor-default">
+    <div className="min-h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-white py-12 sm:py-16 cursor-default">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12 sm:mb-16">
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
             Get In <span className="text-cyan-400">Touch</span>
           </h1>
-          <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto">
+          <p className="text-slate-600 dark:text-gray-400 text-base sm:text-lg max-w-2xl mx-auto">
             Ready to discuss your next Power Platform or Python project? I'd love to hear from you. Let's create
             something amazing together!
           </p>
@@ -109,10 +109,10 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
           {/* Contact Form */}
           <div className="w-full">
-            <Card className="bg-gray-900 border-gray-800 w-full">
+            <Card className="bg-gradient-to-br from-cyan-50/50 via-white to-purple-50/50 dark:bg-none dark:bg-gray-900 border-slate-200 dark:border-gray-800 w-full shadow-xl shadow-slate-200/50 dark:shadow-none">
               <CardHeader>
-                <CardTitle className="text-xl sm:text-2xl text-white">Send me a message</CardTitle>
-                <CardDescription className="text-gray-400 text-sm sm:text-base">
+                <CardTitle className="text-xl sm:text-2xl text-slate-900 dark:text-white">Send me a message</CardTitle>
+                <CardDescription className="text-slate-600 dark:text-gray-400 text-sm sm:text-base">
                   Fill out the form below and I'll get back to you as soon as possible.
                 </CardDescription>
               </CardHeader>
@@ -120,7 +120,7 @@ export default function ContactPage() {
                 <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                     <div>
-                      <label htmlFor="firstName" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
+                      <label htmlFor="firstName" className="block text-sm sm:text-base font-medium text-slate-700 dark:text-gray-300 mb-2">
                         First Name
                       </label>
                       <Input
@@ -129,11 +129,11 @@ export default function ContactPage() {
                         value={formData.firstName}
                         onChange={handleChange}
                         placeholder="John"
-                        className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 w-full cursor-text"
+                        className="bg-slate-50 dark:bg-gray-800 border-slate-200 dark:border-gray-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-400 w-full cursor-text"
                       />
                     </div>
                     <div>
-                      <label htmlFor="lastName" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
+                      <label htmlFor="lastName" className="block text-sm sm:text-base font-medium text-slate-700 dark:text-gray-300 mb-2">
                         Last Name
                       </label>
                       <Input
@@ -142,12 +142,12 @@ export default function ContactPage() {
                         value={formData.lastName}
                         onChange={handleChange}
                         placeholder="Doe"
-                        className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 w-full cursor-text"
+                        className="bg-slate-50 dark:bg-gray-800 border-slate-200 dark:border-gray-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-400 w-full cursor-text"
                       />
                     </div>
                   </div>
                   <div>
-                    <label htmlFor="email" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
+                    <label htmlFor="email" className="block text-sm sm:text-base font-medium text-slate-700 dark:text-gray-300 mb-2">
                       Email Address
                     </label>
                     <Input
@@ -157,11 +157,11 @@ export default function ContactPage() {
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="john.doe@example.com"
-                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 w-full cursor-text"
+                      className="bg-slate-50 dark:bg-gray-800 border-slate-200 dark:border-gray-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-400 w-full cursor-text"
                     />
                   </div>
                   <div>
-                    <label htmlFor="subject" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
+                    <label htmlFor="subject" className="block text-sm sm:text-base font-medium text-slate-700 dark:text-gray-300 mb-2">
                       Subject
                     </label>
                     <Input
@@ -170,11 +170,11 @@ export default function ContactPage() {
                       value={formData.subject}
                       onChange={handleChange}
                       placeholder="Project Discussion"
-                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 w-full cursor-text"
+                      className="bg-slate-50 dark:bg-gray-800 border-slate-200 dark:border-gray-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-400 w-full cursor-text"
                     />
                   </div>
                   <div>
-                    <label htmlFor="message" className="block text-sm sm:text-base font-medium text-gray-300 mb-2">
+                    <label htmlFor="message" className="block text-sm sm:text-base font-medium text-slate-700 dark:text-gray-300 mb-2">
                       Message
                     </label>
                     <Textarea
@@ -184,7 +184,7 @@ export default function ContactPage() {
                       onChange={handleChange}
                       placeholder="Tell me about your project requirements, timeline, and any specific questions you have..."
                       rows={6}
-                      className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 w-full cursor-text"
+                      className="bg-slate-50 dark:bg-gray-800 border-slate-200 dark:border-gray-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-400 w-full cursor-text"
                     />
                   </div>
                   <Button
@@ -208,10 +208,10 @@ export default function ContactPage() {
           {/* Contact Information */}
           <div className="space-y-6 sm:space-y-8">
             {/* Contact Details */}
-            <Card className="bg-gray-900 border-gray-800">
+            <Card className="bg-gradient-to-br from-cyan-50/50 via-white to-purple-50/50 dark:bg-none dark:bg-gray-900 border-slate-200 dark:border-gray-800 shadow-xl shadow-slate-200/50 dark:shadow-none">
               <CardHeader>
-                <CardTitle className="text-xl sm:text-2xl text-white">Contact Information</CardTitle>
-                <CardDescription className="text-gray-400 text-sm sm:text-base">
+                <CardTitle className="text-xl sm:text-2xl text-slate-900 dark:text-white">Contact Information</CardTitle>
+                <CardDescription className="text-slate-600 dark:text-gray-400 text-sm sm:text-base">
                   Feel free to reach out through any of these channels.
                 </CardDescription>
               </CardHeader>
@@ -224,8 +224,8 @@ export default function ContactPage() {
                         <IconComponent className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                       </div>
                       <div>
-                        <p className="text-gray-400 text-sm sm:text-base">{info.title}</p>
-                        <Link href={info.href} className="text-white hover:text-cyan-400 transition-colors text-sm sm:text-base">
+                        <p className="text-slate-600 dark:text-gray-400 text-sm sm:text-base">{info.title}</p>
+                        <Link href={info.href} className="text-slate-900 dark:text-white hover:text-cyan-500 transition-colors text-sm sm:text-base">
                           {info.value}
                         </Link>
                       </div>
@@ -236,10 +236,10 @@ export default function ContactPage() {
             </Card>
 
             {/* Social Links */}
-            <Card className="bg-gray-900 border-gray-800">
+            <Card className="bg-gradient-to-br from-cyan-50/50 via-white to-purple-50/50 dark:bg-none dark:bg-gray-900 border-slate-200 dark:border-gray-800 shadow-xl shadow-slate-200/50 dark:shadow-none">
               <CardHeader>
-                <CardTitle className="text-xl sm:text-2xl text-white">Follow Me</CardTitle>
-                <CardDescription className="text-gray-400 text-sm sm:text-base">
+                <CardTitle className="text-xl sm:text-2xl text-slate-900 dark:text-white">Follow Me</CardTitle>
+                <CardDescription className="text-slate-600 dark:text-gray-400 text-sm sm:text-base">
                   Connect with me on social media for updates and insights.
                 </CardDescription>
               </CardHeader>
@@ -252,12 +252,12 @@ export default function ContactPage() {
                       href={social.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center space-x-4 p-3 rounded-lg hover:bg-gray-800 transition-colors group w-full"
+                      className="flex items-center space-x-4 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-gray-800 transition-colors group w-full"
                     >
-                      <IconComponent className="h-5 w-5 sm:h-6 sm:w-6 text-gray-400 group-hover:text-cyan-400 transition-colors" />
+                      <IconComponent className="h-5 w-5 sm:h-6 sm:w-6 text-slate-500 dark:text-gray-400 group-hover:text-cyan-500 transition-colors" />
                       <div>
-                        <p className="text-white group-hover:text-cyan-400 transition-colors text-sm sm:text-base">{social.name}</p>
-                        <p className="text-gray-400 text-xs sm:text-sm">{social.username}</p>
+                        <p className="text-slate-900 dark:text-white group-hover:text-cyan-500 transition-colors text-sm sm:text-base">{social.name}</p>
+                        <p className="text-slate-600 dark:text-gray-400 text-xs sm:text-sm">{social.username}</p>
                       </div>
                     </Link>
                   )
@@ -266,10 +266,10 @@ export default function ContactPage() {
             </Card>
 
             {/* Availability */}
-            <Card className="bg-gradient-to-r from-cyan-500/30 to-purple-600/30 border-cyan-500/40 shadow-lg">
+            <Card className="bg-gradient-to-r from-cyan-500/10 dark:from-cyan-500/30 to-purple-600/10 dark:to-purple-600/30 border-cyan-500/20 dark:border-cyan-500/40 shadow-lg">
               <CardContent className="p-4 sm:p-6">
-                <h3 className="text-black font-semibold text-lg sm:text-xl mb-2">Currently Available</h3>
-                <p className="text-black-300 text-sm sm:text-base mb-4">
+                <h3 className="text-slate-900 dark:text-white font-semibold text-lg sm:text-xl mb-2">Currently Available</h3>
+                <p className="text-slate-700 dark:text-gray-300 text-sm sm:text-base mb-4">
                   I'm currently accepting new projects and collaborations. Let's discuss how I can help bring your ideas
                   to life!
                 </p>

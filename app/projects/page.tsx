@@ -250,14 +250,14 @@ export default function ProjectsPage() {
   })()
 
   return (
-    <div className="min-h-screen bg-black text-white py-20 cursor-default">
+    <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white py-20 cursor-default">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
             My <span className="text-cyan-400">Projects</span>
           </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+          <p className="text-gray-500 dark:text-gray-400 text-lg max-w-2xl mx-auto">
             A collection of my work showcasing Power Platform development, Python applications, and data analytics
             solutions that solve real-world business problems.
           </p>
@@ -272,7 +272,7 @@ export default function ProjectsPage() {
               className={
                 selectedCategory === category.name
                   ? "bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 text-white"
-                  : "bg-gray-600 border-gray-600 text-white hover:bg-gray-800"
+                  : "bg-gray-100 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800"
               }
               onClick={() => setSelectedCategory(category.name)}
             >
@@ -281,32 +281,35 @@ export default function ProjectsPage() {
           ))}
         </div>
 
-        {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
+        {/* Projects Stack */}
+        <div className="flex flex-col gap-12 sm:gap-24 w-full max-w-4xl mx-auto pb-32">
           {filteredProjects.map((project, index) => (
             <Card
               key={index}
-              className="bg-gray-900 border-gray-800 hover:border-cyan-500 transition-all duration-300 group h-full flex flex-col"
+              className="sticky w-full bg-gradient-to-br from-cyan-50 via-white to-purple-50 dark:bg-none dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-cyan-500 transition-all duration-300 group flex flex-col shadow-xl dark:shadow-sm"
+              style={{ top: `calc(100px + ${index * 20}px)` }}
             >
               <CardHeader>
-                <div className="flex items-center justify-between mb-2">
-                  <Badge variant="secondary" className="bg-gray-800 text-gray-300 hover:bg-gray-800 hover:text-gray-300">
-                    {project.displayBadge}
-                  </Badge>
+                <div className={`flex items-center mb-2 ${selectedCategory !== "All" ? "justify-between" : "justify-center"}`}>
+                  {selectedCategory !== "All" && (
+                    <Badge variant="secondary" className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+                      {project.displayBadge}
+                    </Badge>
+                  )}
                   <div className="flex items-center text-gray-400 text-sm">
                     <Calendar className="mr-1 h-4 w-4" />
                     {project.date}
                   </div>
                 </div>
-                <CardTitle className="text-white group-hover:text-cyan-400 transition-colors">
+                <CardTitle className="text-gray-900 dark:text-white group-hover:text-cyan-500 transition-colors">
                   {project.title}
                 </CardTitle>
-                <CardDescription className="text-gray-400">{project.displayDescription}</CardDescription>
+                <CardDescription className="text-gray-600 dark:text-gray-400">{project.displayDescription}</CardDescription>
               </CardHeader>
               <CardContent className="flex-1 flex flex-col justify-between p-4 sm:p-6">
                 <div className="flex flex-wrap gap-2 mb-6">
                   {project.displayTools.map((tool, toolIndex) => (
-                    <Badge key={toolIndex} variant="outline" className="border-gray-600 text-gray-300 hover:border-gray-600 hover:text-gray-300">
+                    <Badge key={toolIndex} variant="outline" className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-400">
                       {tool}
                     </Badge>
                   ))}
@@ -315,7 +318,7 @@ export default function ProjectsPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="border-gray-600 text-white hover:bg-gray-800 flex-1 bg-transparent"
+                    className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 flex-1 bg-transparent"
                   >
                     <Github className="mr-2 h-4 w-4" />
                     Code
@@ -323,7 +326,7 @@ export default function ProjectsPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="border-gray-600 text-white hover:bg-gray-800 flex-1 bg-transparent"
+                    className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 flex-1 bg-transparent"
                   >
                     <ExternalLink className="mr-2 h-4 w-4" />
                     Demo
@@ -337,7 +340,7 @@ export default function ProjectsPage() {
         {/* Call to Action */}
         <div className="text-center mt-16">
           <h3 className="text-2xl font-bold mb-4">Interested in working together?</h3>
-          <p className="text-gray-400 mb-6">I'm always open to discussing new opportunities and exciting projects.</p>
+          <p className="text-gray-500 dark:text-gray-400 mb-6">I'm always open to discussing new opportunities and exciting projects.</p>
           <Link href="/contact">
             <Button className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700">
               Get In Touch

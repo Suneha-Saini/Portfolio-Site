@@ -1,86 +1,182 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress"
-import {Download, Award, Calendar, MapPin, Building, TrendingUp, Target, Code, Database, Brain, BarChart3, Zap, Globe, CheckCircle, Star, ExternalLink, X,} from "lucide-react"
+import { Download, Award, Calendar, MapPin, Building, TrendingUp, Target, Code, Database, Brain, BarChart3, Zap, Globe, CheckCircle, Star, ExternalLink, X, } from "lucide-react"
 import Image from "next/image"
 
 export default function AboutPage() {
   const [activeTab, setActiveTab] = useState("skills")
-  const [activeSkillTab, setActiveSkillTab] = useState("Programming Languages & Libraries")
+  const [activeSkillTab, setActiveSkillTab] = useState("Programming & Frontend")
+  const [skillAnimKey, setSkillAnimKey] = useState(0)
+
+  // Drag-and-drop state for capsules
+  const [dragOffsets, setDragOffsets] = useState<Record<string, { x: number; y: number }>>({})
+  const dragRef = useRef<{
+    isDragging: boolean;
+    key: string;
+    startMouseX: number;
+    startMouseY: number;
+    startOffsetX: number;
+    startOffsetY: number;
+  } | null>(null)
+  const [draggingKey, setDraggingKey] = useState<string | null>(null)
+  const capsuleContainerRef = useRef<HTMLDivElement>(null)
+
+  const handleDragStart = useCallback((e: React.MouseEvent | React.TouchEvent, capsuleKey: string) => {
+    e.preventDefault();
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+    const existing = dragOffsets[capsuleKey] || { x: 0, y: 0 };
+    dragRef.current = {
+      isDragging: true,
+      key: capsuleKey,
+      startMouseX: clientX,
+      startMouseY: clientY,
+      startOffsetX: existing.x,
+      startOffsetY: existing.y,
+    };
+    setDraggingKey(capsuleKey);
+  }, [dragOffsets]);
+
+  useEffect(() => {
+    const handleMove = (e: MouseEvent | TouchEvent) => {
+      const drag = dragRef.current;
+      if (!drag?.isDragging) return;
+      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+      const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+      const dx = clientX - drag.startMouseX;
+      const dy = clientY - drag.startMouseY;
+      const key = drag.key;
+      let newX = drag.startOffsetX + dx;
+      let newY = drag.startOffsetY + dy;
+
+      // Clamp within the capsule container bounds
+      const container = capsuleContainerRef.current;
+      if (container) {
+        const containerRect = container.getBoundingClientRect();
+        const capsuleEl = container.querySelector(`[data-capsule-key="${key}"]`) as HTMLElement;
+        if (capsuleEl) {
+          const capsuleRect = capsuleEl.getBoundingClientRect();
+          // Natural position = current position minus current offset
+          const naturalLeft = capsuleRect.left - newX;
+          const naturalTop = capsuleRect.top - newY;
+          // Clamp: capsule edges must stay within container
+          const minX = containerRect.left - naturalLeft;
+          const maxX = containerRect.right - capsuleRect.width - naturalLeft;
+          const minY = containerRect.top - naturalTop;
+          const maxY = containerRect.bottom - capsuleRect.height - naturalTop;
+          newX = Math.max(minX, Math.min(maxX, newX));
+          newY = Math.max(minY, Math.min(maxY, newY));
+        }
+      }
+
+      setDragOffsets(prev => ({
+        ...prev,
+        [key]: { x: newX, y: newY }
+      }));
+    };
+    const handleUp = () => {
+      if (dragRef.current) {
+        dragRef.current.isDragging = false;
+        setDraggingKey(null);
+        dragRef.current = null;
+      }
+    };
+    window.addEventListener('mousemove', handleMove);
+    window.addEventListener('mouseup', handleUp);
+    window.addEventListener('touchmove', handleMove, { passive: false });
+    window.addEventListener('touchend', handleUp);
+    return () => {
+      window.removeEventListener('mousemove', handleMove);
+      window.removeEventListener('mouseup', handleUp);
+      window.removeEventListener('touchmove', handleMove);
+      window.removeEventListener('touchend', handleUp);
+    };
+  }, []);
+
+  // Pre-computed layout positions for capsules (scattered pile look)
+  const getCapsuleLayout = (index: number, total: number) => {
+    const seed = index * 137.5 + skillAnimKey * 31;
+    const sin1 = Math.sin(seed);
+    const cos1 = Math.cos(seed * 2.1);
+    const sin2 = Math.sin(seed * 1.7);
+    const cos2 = Math.cos(seed * 3.3);
+    const leftPercent = 5 + ((Math.abs(sin1) * 10000) % 80);
+    const row = Math.floor(index / 3);
+    const bottomPercent = 5 + row * 22 + ((Math.abs(cos1) * 100) % 10);
+    const angle = ((sin1 * 43) % 25);
+    const delay = index * 0.12 + ((Math.abs(cos2) * 100) % 8) * 0.02;
+    const startRotate = ((cos2 * 100) % 360);
+    const startX = ((sin2 * 100) % 120) - 60;
+    return { leftPercent, bottomPercent, angle, delay, startRotate, startX };
+  };
   const [activeExperienceTab, setActiveExperienceTab] = useState("professional")
   const [activeEducationTab, setActiveEducationTab] = useState("qualification")
   const [selectedImage, setSelectedImage] = useState(null)
 
   const skills = [
     {
-      name: "Programming Languages & Libraries",
-      description: "Core languages and frameworks for building robust applications",
+      name: "Programming & Frontend",
+      description: "Core languages, frameworks, and UI tools for building modern applications",
       subSkills: [
-         { name: "HTML", level: 95, icon: Code},
-        { name: "CSS", level: 92, icon: Code},
+        { name: "HTML", level: 95, icon: Code },
+        { name: "CSS", level: 92, icon: Code },
         { name: "JavaScript", level: 90, icon: Code },
         { name: "React.js", level: 88, icon: Code },
-        { name: "Python", level: 85, icon: Code},
+        { name: "Python", level: 85, icon: Code },
         { name: "SQL", level: 80, icon: Database },
+        { name: "Fluent UI", level: 85, icon: Code },
+        { name: "Tailwind CSS", level: 85, icon: Code },
+        { name: "Responsive Design", level: 87, icon: Globe },
+        { name: "C++", level: 87, icon: Code },
       ],
       category: "Programming",
     },
     {
-      name: "Power Platform & Automation",
-      description: "Low-code solutions for business process automation",
+      name: "Microsoft Power Platform & Ecosystem",
+      description: "Low-code solutions for business process automation & Microsoft tools for data integration",
       subSkills: [
-        { name: "Power Apps (Canvas & Model-Driven)", level: 95, icon: Zap},
-        { name: "Power Automate", level: 90, icon: Zap},
-        { name: "Power Pages", level: 90, icon: Zap},
-        { name: "Dataverse", level: 90, icon: Database},
-        { name: "Sharepoint", level: 70, icon: Database},
+        { name: "Power Apps (Model-Driven)", level: 95, icon: Zap },
+        { name: "Canvas Apps", level: 85, icon: Zap },
+        { name: "Power Automate", level: 90, icon: Zap },
+        { name: "Power Pages", level: 90, icon: Zap },
+        { name: "Dataverse", level: 90, icon: Database },
+        { name: "SharePoint", level: 70, icon: Database },
+        { name: "Power BI", level: 70, icon: BarChart3 },
+        { name: "Microsoft 365", level: 65, icon: Building },
+        { name: "Dynamics 365", level: 60, icon: Building },
       ],
       category: "Power Platform",
     },
     {
-      name: "Frontend & UI Development",
-      description: "Creating responsive and user-friendly interfaces",
-      subSkills: [
-        { name: "React.js", level: 88, icon: Code},
-        { name: "Tailwind CSS", level: 85, icon: Code },
-        { name: "Responsive Design", level: 87, icon: Globe },
-      ],
-      category: "Frontend",
-    },
-    {
-      name: "Testing Tools & Practices",
+      name: "Tools & Platforms",
       description: "Ensuring quality through effective testing methodologies",
       subSkills: [
         { name: "Postman", level: 85, icon: CheckCircle },
-        { name: "Manual Testing", level: 80, icon: CheckCircle},
+        { name: "Manual Testing", level: 80, icon: CheckCircle },
         { name: "Debugging Tools", level: 82, icon: Code },
+        { name: "Git", level: 82, icon: Code },
+        { name: "GitHub", level: 82, icon: Code },
+        { name: "Docker", level: 85, icon: CheckCircle },
+        { name: "Azure Portal", level: 85, icon: CheckCircle },
+        { name: "Azure DevOps", level: 82, icon: Code },
       ],
       category: "Testing",
-    },
-    {
-      name: "Microsoft Ecosystem Integration",
-      description: "Leveraging Microsoft tools for seamless data integration",
-      subSkills: [
-        { name: "Power BI", level: 70, icon: BarChart3},
-        { name: "Microsoft 365", level: 65, icon: Building},
-        { name: "Dynamics 365", level: 60, icon: Building },
-      ],
-      category: "Microsoft",
     },
     {
       name: "Soft Skills",
       description: "Essential interpersonal skills for collaboration and efficiency",
       subSkills: [
-        { name: "Collaboration", level: 90, icon: Star},
+        { name: "Collaboration", level: 90, icon: Star },
         { name: "Problem Solving", level: 92, icon: Brain },
         { name: "Time Management", level: 88, icon: Calendar },
-        { name: "Teamwork", level: 89, icon: Star},
-        { name: "Attention to Detail", level: 89, icon: CheckCircle},
+        { name: "Teamwork", level: 89, icon: Star },
+        { name: "Attention to Detail", level: 89, icon: CheckCircle },
       ],
       category: "Soft Skills",
     },
@@ -95,6 +191,7 @@ export default function AboutPage() {
       type: "Full-time",
       description: "Working on low-code and custom-code solutions for internal products and client-facing platforms, integrating Power Platform capabilities with modern React-based interfaces.",
       achievements: [
+        "Successfully Developed a backend bots (Report Generation) that migrate Tableau reports into Power BI with a unified frontend interface using React, fluent and APIs integrations",
         "Successfully integrated 4 backend bots (Assessment, Parsing, Mapping, Report Generation) with a unified frontend interface using React and APIs",
         "Redesigned UI/UX of reporting modules for enhanced user experience and data clarity",
         "Built and enhanced multiple modules in Power Pages, Power Apps (Canvas and Model-Driven), and automated email notifications using Power Automate",
@@ -107,12 +204,12 @@ export default function AboutPage() {
         modules_developed: "10+",
         automation_flows_created: "20+",
         UX_improvement: "Significantly increased client usability scores",
-        api_integrations: "20+"
+        api_integrations: "25+"
       }
     }
   ]
 
-  const freelanceExperiences = [ 
+  const freelanceExperiences = [
     {
       title: "Web Development Projects",
       company: "Self-Initiated & Client Work",
@@ -122,6 +219,7 @@ export default function AboutPage() {
       description: "Developed responsive and interactive web applications for personal, academic, and client needs.",
       achievements: [
         "Car Villa – Modern React-based car dealership platform with dynamic listings, filtering, and responsive UI.",
+        "Portfolio – Developed and delivered responsive portfolio websites for multiple clients, focusing on modern UI, performance, and personalized design.",
         "RTO CMS – SharePoint-based RTO rules management system integrated with an external API for real-time rule display and document uploads."
       ],
       technologies: ["React", "SharePoint", "JavaScript", "HTML", "CSS"],
@@ -256,7 +354,7 @@ export default function AboutPage() {
       institution: "Atam Public School",
       period: "2017 - 2019",
       location: "Amritsar, India",
-      grade: "Percentage: 89%", 
+      grade: "Percentage: 89%",
       coursework: [
         "Mathematics",
         "Science",
@@ -278,7 +376,7 @@ export default function AboutPage() {
       credentialUrl: "https://certx.in/certificate/0270772f-3809-4400-b29b-1e1c61cd0997516871",
       photographUrl: "/Certifications/Be10x.png",
       level: "Professional",
-      skills: ["AI Tools", "Prompt Engineering", "Automation","Grok","NotebookLM","Napkin","ChatGpt"],
+      skills: ["AI Tools", "Prompt Engineering", "Automation", "Grok", "NotebookLM", "Napkin", "ChatGpt"],
     },
     {
       name: "Describe Cloud Computing",
@@ -371,11 +469,11 @@ export default function AboutPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-black text-white py-12 sm:py-16 cursor-default">
+    <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white py-12 sm:py-16 cursor-default">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Modal for Certificate Image */}
         {selectedImage && (
-          <div 
+          <div
             className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
             onClick={() => setSelectedImage(null)}
           >
@@ -386,77 +484,97 @@ export default function AboutPage() {
               >
                 <X className="h-6 w-6" />
               </button>
-              <Image  src={selectedImage}  alt="Certificate"  width={800}  height={600}  className="rounded-lg object-contain w-full h-auto"
+              <Image src={selectedImage} alt="Certificate" width={800} height={600} className="rounded-lg object-contain w-full h-auto"
               />
             </div>
           </div>
         )}
 
         {/* Hero Section */}
-<div className="grid grid-cols-1 lg:grid-cols-[40%_60%] gap-8 items-start mb-16 sm:mb-20">
-  <div className="order-1 lg:order-1 relative w-full max-w-md mx-auto -mt-4 -ml-4">
-    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl blur-2xl opacity-20"></div>
-    <Image src="/images/AboutPage.png" alt="Suneha - About Me" width={500} height={600} className="relative rounded-2xl shadow-2xl w-full h-auto" />
-  </div>
-  <div className="order-2 lg:order-2 space-y-6">
-    <div className="space-y-4">
-      <Badge className="bg-gradient-to-r from-cyan-500 to-purple-600 text-white">Available for Hire</Badge>
-      <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold">
-        About <span className="text-cyan-400">Me</span>
-      </h1>
-    </div>
-    <p className="text-base sm:text-lg text-gray-300 leading-relaxed">
-      Hello! I'm Suneha, a passionate{" "}
-      <span className="text-pink-400 font-semibold">React interface designer</span>,{" "}
-      <span className="text-cyan-400 font-semibold">Power Platform Developer</span>, and{" "}
-      <span className="text-purple-400 font-semibold">Python enthusiast</span>{" "} with hands-on experience in building smart, data-driven solutions.
-    </p>
-    <p className="text-base sm:text-lg text-gray-300 leading-relaxed">
-      I specialize in building responsive and dynamic web applications using{" "}
-      <span className="text-pink-300 font-semibold">React</span>{" "}along with developing low-code business applications on {" "}
-      <span className="text-cyan-300 font-semibold">Power Apps</span>,{" "}
-      <span className="text-cyan-300 font-semibold">Power Automate</span>,{" "}
-      <span className="text-cyan-300 font-semibold">Power BI</span>, and{" "}
-      <span className="text-cyan-300 font-semibold">Dataverse</span>, along with that I also work on{" "}
-      <span className="text-purple-300 font-semibold">Python-based automation</span> and{" "}
-      <span className="text-purple-300 font-semibold">AI/ML integration</span>. creating end-to-end solutions that connect modern interfaces with backend systems and APIs.{" "}
-    </p>
-    <p className="text-base sm:text-lg text-gray-300 leading-relaxed">
-      In the past year, I’ve worked on real-world projects that helped automate processes, improve reporting, and deliver efficient, scalable digital experiences.
-    </p>
-    {/* Key Stats */}
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 py-4 sm:py-6">
-      <div className="text-center">
-        <div className="text-xl sm:text-2xl font-bold text-cyan-400">10+</div>
-        <div className="text-xs sm:text-sm text-gray-400">Projects Completed</div>
-      </div>
-      <div className="text-center">
-        <div className="text-xl sm:text-2xl font-bold text-purple-400">95%</div>
-        <div className="text-xs sm:text-sm text-gray-400">Client Satisfaction</div>
-      </div>
-      <div className="text-center">
-        <div className="text-xl sm:text-2xl font-bold text-amber-400">20+</div>
-        <div className="text-xs sm:text-sm text-gray-400">Automation Flows Created</div>
-      </div>
-      <div className="text-center">
-        <div className="text-xl sm:text-2xl font-bold text-yellow-400">1+</div>
-        <div className="text-xs sm:text-sm text-gray-400">Years of Experience</div>
-      </div>
-      <div className="text-center">
-        <div className="text-xl sm:text-2xl font-bold text-blue-400">15+</div>
-        <div className="text-xs sm:text-sm text-gray-400">APIs Integrated</div>
-      </div>
-        <div className="text-center">
-        <div className="text-xl sm:text-2xl font-bold text-blue-400">5+</div>
-        <div className="text-xs sm:text-sm text-gray-400">APIs Created</div>
-      </div>
-    </div>
-  </div>
-</div>
+        <div className="grid grid-cols-1 lg:grid-cols-[40%_60%] gap-8 items-start mb-16 sm:mb-20">
+          <div className="order-1 lg:order-1 relative w-full flex justify-center sm:block">
+            {/* Mobile Circle */}
+            <div className="block sm:hidden relative w-56 h-56 rounded-full border-4 border-cyan-500 overflow-hidden shadow-[0_0_15px_rgba(34,211,238,0.4)]">
+              <Image
+                src="/images/AboutPage.png"
+                alt="Suneha - About Me"
+                fill
+                className="object-cover object-top"
+                priority
+              />
+            </div>
+
+            {/* Desktop Card */}
+            <div className="hidden sm:block relative w-full max-w-md mx-auto">
+              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl blur-2xl opacity-20"></div>
+              <Image
+                src="/images/AboutPage.png"
+                alt="Suneha - About Me"
+                width={500}
+                height={600}
+                className="relative rounded-2xl shadow-2xl w-full h-auto"
+              />
+            </div>
+          </div>
+          <div className="order-2 lg:order-2 space-y-6">
+            <div className="space-y-4">
+              <Badge className="bg-gradient-to-r from-cyan-500 to-purple-600 text-white">Available for Hire</Badge>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold">
+                About <span className="text-cyan-400">Me</span>
+              </h1>
+            </div>
+            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+              Hello! I'm Suneha, a passionate{" "}
+              <span className="text-pink-400 font-semibold">React interface designer</span>,{" "}
+              <span className="text-cyan-400 font-semibold">Power Platform Developer</span>, and{" "}
+              <span className="text-purple-400 font-semibold">Python enthusiast</span>{" "} with hands-on experience in building smart, data-driven solutions.
+            </p>
+            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+              I specialize in building responsive and dynamic web applications using{" "}
+              <span className="text-pink-300 font-semibold">React</span>{" "}along with developing low-code business applications on {" "}
+              <span className="text-cyan-300 font-semibold">Power Apps</span>,{" "}
+              <span className="text-cyan-300 font-semibold">Power Automate</span>,{" "}
+              <span className="text-cyan-300 font-semibold">Power BI</span>, and{" "}
+              <span className="text-cyan-300 font-semibold">Dataverse</span>, along with that I also work on{" "}
+              <span className="text-purple-300 font-semibold">Python-based automation</span> and{" "}
+              <span className="text-purple-300 font-semibold">AI/ML integration</span>. creating end-to-end solutions that connect modern interfaces with backend systems and APIs.{" "}
+            </p>
+            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+              In the past year, I’ve worked on real-world projects that helped automate processes, improve reporting, and deliver efficient, scalable digital experiences.
+            </p>
+            {/* Key Stats */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 py-4 sm:py-6">
+              <div className="text-center">
+                <div className="text-xl sm:text-2xl font-bold text-cyan-400">10+</div>
+                <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Projects Completed</div>
+              </div>
+              <div className="text-center">
+                <div className="text-xl sm:text-2xl font-bold text-purple-400">95%</div>
+                <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Client Satisfaction</div>
+              </div>
+              <div className="text-center">
+                <div className="text-xl sm:text-2xl font-bold text-amber-400">20+</div>
+                <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Automation Flows Created</div>
+              </div>
+              <div className="text-center">
+                <div className="text-xl sm:text-2xl font-bold text-yellow-400">1+</div>
+                <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Years of Experience</div>
+              </div>
+              <div className="text-center">
+                <div className="text-xl sm:text-2xl font-bold text-blue-400">25+</div>
+                <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">APIs Integrated</div>
+              </div>
+              <div className="text-center">
+                <div className="text-xl sm:text-2xl font-bold text-blue-400">5+</div>
+                <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">APIs Created</div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Tabbed Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 bg-gray-900 p-1 rounded-lg mb-6">
+          <TabsList className="grid w-full grid-cols-3 bg-gray-100 dark:bg-gray-900 p-1 rounded-lg mb-6">
             <TabsTrigger
               value="skills"
               className="rounded-md text-sm sm:text-base px-2 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-600"
@@ -483,20 +601,20 @@ export default function AboutPage() {
               <h2 className="text-2xl sm:text-3xl font-bold mb-2">
                 Technical <span className="text-cyan-400">Expertise</span>
               </h2>
-              <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
+              <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
                 Specialized skills that power organizational transformation and fuel innovation across processes and solutions
               </p>
             </div>
 
-            <Tabs value={activeSkillTab} onValueChange={setActiveSkillTab} className="w-full">
-              <TabsList className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-1 sm:gap-2 bg-gray-900 p-1 rounded-lg mb-4">
+            <Tabs value={activeSkillTab} onValueChange={(val) => { setActiveSkillTab(val); setSkillAnimKey(prev => prev + 1); setDragOffsets({}); }} className="w-full">
+              <TabsList className="grid grid-cols-4 w-full bg-gray-100 dark:bg-gray-900 p-1 rounded-lg mb-4">
                 {skills.map((skillGroup) => (
                   <TabsTrigger
                     key={skillGroup.name}
                     value={skillGroup.name}
-                    className="rounded-md text-xs sm:text-sm px-1 sm:px-2 py-1 sm:py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-600 text-gray-300 hover:text-white transition-colors"
+                    className="rounded-md text-xs sm:text-sm px-1 py-1 sm:py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-600 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors text-center leading-tight"
                   >
-                    {skillGroup.name.length > 15 ? `${skillGroup.name.slice(0, 15)}...` : skillGroup.name}
+                    {skillGroup.name}
                   </TabsTrigger>
                 ))}
               </TabsList>
@@ -504,36 +622,68 @@ export default function AboutPage() {
               {skills.map((skillGroup) => (
                 <TabsContent key={skillGroup.name} value={skillGroup.name}>
                   <div className="text-center mb-6 sm:mb-8">
-                    <h3 className="text-xl sm:text-2xl font-bold mb-2 text-white">{skillGroup.name}</h3>
-                    <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto">{skillGroup.description}</p>
+                    <h3 className="text-xl sm:text-2xl font-bold mb-2 text-gray-900 dark:text-white">{skillGroup.name}</h3>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base max-w-xl mx-auto">{skillGroup.description}</p>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                    {skillGroup.subSkills.map((subSkill, subIndex) => {
-                      const IconComponent = subSkill.icon
-                      return (
-                        <Card
-                          key={subIndex}
-                          className="bg-gray-900 border border-gray-800 hover:border-cyan-500 transition-all duration-300"
-                        >
-                          <CardContent className="p-4 sm:p-6">
-                            <div className="flex items-center justify-between mb-2 sm:mb-4">
-                              <div className="flex items-center space-x-2 sm:space-x-3">
-                                <div className="bg-gradient-to-r from-cyan-500 to-purple-600 p-1 sm:p-2 rounded-md">
-                                  <IconComponent className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
-                                </div>
-                                <div>
-                                  <h3 className="text-sm sm:text-base font-semibold text-white">{subSkill.name}</h3>
-                                </div>
-                              </div>
-                              <div className="text-right text-xs sm:text-sm text-gray-400">
-                                <div>{subSkill.level}%</div>
+                  <div key={skillAnimKey} ref={capsuleContainerRef} className="relative">
+                    <div className="flex flex-wrap justify-center items-end gap-x-3 gap-y-4 sm:gap-x-5 sm:gap-y-6 px-2 sm:px-6 pt-6 sm:pt-10 pb-2 min-h-[200px]">
+                      {skillGroup.subSkills.map((subSkill, subIndex) => {
+                        const capsuleColors = [
+                          "bg-[#2f4858] text-white",
+                          "bg-[#c27a51] text-white",
+                          "bg-[#e6e2d6] text-black",
+                          "bg-[#333333] text-white",
+                          "bg-[#e6b771] text-black",
+                          "bg-[#2f4858] text-white",
+                          "bg-[#c27a51] text-white",
+                          "bg-[#e6e2d6] text-black",
+                          "bg-[#333333] text-white",
+                          "bg-[#e6b771] text-black",
+                        ];
+                        const bgClass = capsuleColors[subIndex % capsuleColors.length];
+                        const layout = getCapsuleLayout(subIndex, skillGroup.subSkills.length);
+
+                        const capsuleKey = `${skillAnimKey}-${subIndex}`;
+                        const offset = dragOffsets[capsuleKey] || { x: 0, y: 0 };
+                        const isDragging = draggingKey === capsuleKey;
+
+                        return (
+                          <div
+                            key={capsuleKey}
+                            data-capsule-key={capsuleKey}
+                            className={`relative ${isDragging ? '!z-[100] cursor-grabbing' : 'hover:!z-50 cursor-grab'}`}
+                            style={{
+                              zIndex: isDragging ? 100 : subIndex,
+                              transform: `translate(${offset.x}px, ${offset.y}px)`,
+                              transition: isDragging ? 'none' : 'transform 0.3s ease',
+                            }}
+                            onMouseDown={(e) => handleDragStart(e, capsuleKey)}
+                            onTouchStart={(e) => handleDragStart(e, capsuleKey)}
+                          >
+                            <div
+                              className="capsule-drop"
+                              style={{
+                                '--final-rotate': `${layout.angle}deg`,
+                                '--start-x': `${layout.startX}px`,
+                                '--start-rotate': `${layout.startRotate}deg`,
+                                animationDelay: `${layout.delay}s`,
+                              } as React.CSSProperties}
+                            >
+                              <div className={`group relative px-5 sm:px-10 py-3 sm:py-4 rounded-full font-bold text-sm sm:text-base md:text-lg transition-all duration-200 shadow-lg border border-transparent hover:border-white/20 whitespace-nowrap select-none ${isDragging ? 'scale-110 shadow-2xl shadow-cyan-500/20' : 'hover:scale-105'} ${bgClass}`}>
+                                <span className={`flex items-center justify-center transition-opacity duration-300 ${!isDragging ? 'group-hover:opacity-10' : ''}`}>
+                                  {subSkill.name}
+                                </span>
+                                {!isDragging && (
+                                  <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-[2px]">
+                                    <span className="text-white font-bold text-lg sm:text-xl">{subSkill.level}%</span>
+                                  </div>
+                                )}
                               </div>
                             </div>
-                            <Progress value={subSkill.level} className="h-1 sm:h-2 mb-1 sm:mb-2" />
-                          </CardContent>
-                        </Card>
-                      )
-                    })}
+                          </div>
+                        )
+                      })}
+                    </div>
                   </div>
                 </TabsContent>
               ))}
@@ -546,20 +696,20 @@ export default function AboutPage() {
               <h2 className="text-2xl sm:text-3xl font-bold mb-2">
                 My <span className="text-cyan-400">Experience</span>
               </h2>
-              <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
+              <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
                 A diverse journey of professional growth, independent ventures, and internships
               </p>
             </div>
 
             <Tabs value={activeExperienceTab} onValueChange={setActiveExperienceTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-4 bg-gray-900 p-1 rounded-lg mb-4">
+              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 bg-gray-100 dark:bg-gray-900 p-1 rounded-lg mb-4">
                 <TabsTrigger
                   value="professional"
                   className="rounded-md text-sm sm:text-base px-2 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-600"
                 >
                   Professional Journey
                 </TabsTrigger>
-                
+
                 <TabsTrigger
                   value="freelance"
                   className="rounded-md text-sm sm:text-base px-2 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-600"
@@ -582,8 +732,8 @@ export default function AboutPage() {
 
               <TabsContent value="professional">
                 <div className="text-center mb-6 sm:mb-8">
-                  <h3 className="text-xl sm:text-2xl font-bold mb-2 text-white">Professional Journey</h3>
-                  <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
+                  <h3 className="text-xl sm:text-2xl font-bold mb-2 text-gray-900 dark:text-white">Professional Journey</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
                     Highlights of my career with esteemed companies and organizations.
                   </p>
                 </div>
@@ -591,40 +741,40 @@ export default function AboutPage() {
                   {experiences.map((exp, index) => (
                     <Card
                       key={index}
-                      className="bg-gray-900 border border-gray-800 hover:border-cyan-500 transition-all duration-300"
+                      className="bg-gradient-to-br from-cyan-50/50 via-white to-purple-50/50 dark:bg-none dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-cyan-500 transition-all duration-300"
                     >
                       <CardHeader className="p-4 sm:p-6">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
                           <div className="space-y-2">
-                            <CardTitle className="text-lg sm:text-xl text-white">{exp.title}</CardTitle>
+                            <CardTitle className="text-lg sm:text-xl text-gray-900 dark:text-white">{exp.title}</CardTitle>
                             <div className="flex items-center space-x-2 sm:space-x-4">
                               <div className="flex items-center text-cyan-400 font-medium">
                                 <Building className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                                 {exp.company}
                               </div>
-                              <Badge variant="outline" className="border-gray-600 text-xs sm:text-sm text-gray-300">
+                              <Badge variant="outline" className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">
                                 {exp.type}
                               </Badge>
                             </div>
                           </div>
                           <div className="flex flex-col sm:items-end space-y-1 sm:space-y-2">
-                            <div className="flex items-center text-gray-400 text-xs sm:text-sm">
+                            <div className="flex items-center text-gray-600 dark:text-gray-400 text-xs sm:text-sm">
                               <Calendar className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                               {exp.period}
                             </div>
-                            <div className="flex items-center text-gray-400 text-xs sm:text-sm">
+                            <div className="flex items-center text-gray-600 dark:text-gray-400 text-xs sm:text-sm">
                               <MapPin className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                               {exp.location}
                             </div>
                           </div>
                         </div>
-                        <CardDescription className="text-gray-300 text-sm sm:text-base mt-2 sm:mt-4">
+                        <CardDescription className="text-gray-700 dark:text-gray-300 text-sm sm:text-base mt-2 sm:mt-4">
                           {exp.description}
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6">
                         <div>
-                          <h4 className="text-white font-semibold text-sm sm:text-base flex items-center">
+                          <h4 className="text-gray-900 dark:text-white font-semibold text-sm sm:text-base flex items-center">
                             <Target className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5 text-cyan-400" />
                             Key Achievements
                           </h4>
@@ -632,14 +782,14 @@ export default function AboutPage() {
                             {exp.achievements.map((achievement, achIndex) => (
                               <div key={achIndex} className="flex items-start space-x-1 sm:space-x-2">
                                 <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-400 mt-0.5 flex-shrink-0" />
-                                <span className="text-gray-300 text-sm">{achievement}</span>
+                                <span className="text-gray-700 dark:text-gray-300 text-sm">{achievement}</span>
                               </div>
                             ))}
                           </div>
                         </div>
 
                         <div className="bg-gradient-to-r from-cyan-500/10 to-purple-600/10 rounded-lg p-3 sm:p-4">
-                          <h4 className="text-white font-semibold text-sm sm:text-base flex items-center">
+                          <h4 className="text-gray-900 dark:text-white font-semibold text-sm sm:text-base flex items-center">
                             <TrendingUp className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5 text-green-400" />
                             Business Impact
                           </h4>
@@ -647,20 +797,20 @@ export default function AboutPage() {
                             {Object.entries(exp.impact).map(([key, value], impIndex) => (
                               <div key={impIndex} className="text-center">
                                 <div className="text-lg sm:text-xl font-bold text-cyan-400">{value}</div>
-                                <div className="text-xs sm:text-sm text-gray-400 capitalize">{key.replace("_", " ")}</div>
+                                <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 capitalize">{key.replace("_", " ")}</div>
                               </div>
                             ))}
                           </div>
                         </div>
 
                         <div>
-                          <h4 className="text-white font-semibold text-sm sm:text-base mb-2">Technologies Used</h4>
+                          <h4 className="text-gray-900 dark:text-white font-semibold text-sm sm:text-base mb-2">Technologies Used</h4>
                           <div className="flex flex-wrap gap-1 sm:gap-2">
                             {exp.technologies.map((tech, techIndex) => (
                               <Badge
                                 key={techIndex}
                                 variant="secondary"
-                                className="bg-gray-800 text-xs sm:text-sm text-gray-300 hover:bg-gray-800 hover:text-gray-300"
+                                className="bg-gray-200 dark:bg-gray-800 text-xs sm:text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700"
                               >
                                 {tech}
                               </Badge>
@@ -675,8 +825,8 @@ export default function AboutPage() {
 
               <TabsContent value="freelance">
                 <div className="text-center mb-6 sm:mb-8">
-                  <h3 className="text-xl sm:text-2xl font-bold mb-2 text-white">Freelance & Personal Ventures</h3>
-                  <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
+                  <h3 className="text-xl sm:text-2xl font-bold mb-2 text-gray-900 dark:text-white">Freelance & Personal Ventures</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
                     Independent projects and freelance work showcasing my initiative and skills.
                   </p>
                 </div>
@@ -684,40 +834,40 @@ export default function AboutPage() {
                   {freelanceExperiences.map((exp, index) => (
                     <Card
                       key={index}
-                      className="bg-gray-900 border border-gray-800 hover:border-cyan-500 transition-all duration-300"
+                      className="bg-gradient-to-br from-cyan-50/50 via-white to-purple-50/50 dark:bg-none dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-cyan-500 transition-all duration-300"
                     >
                       <CardHeader className="p-4 sm:p-6">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
                           <div className="space-y-2">
-                            <CardTitle className="text-lg sm:text-xl text-white">{exp.title}</CardTitle>
+                            <CardTitle className="text-lg sm:text-xl text-gray-900 dark:text-white">{exp.title}</CardTitle>
                             <div className="flex items-center space-x-2 sm:space-x-4">
                               <div className="flex items-center text-cyan-400 font-medium">
                                 <Building className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                                 {exp.company}
                               </div>
-                              <Badge variant="outline" className="border-gray-600 text-xs sm:text-sm text-gray-300">
+                              <Badge variant="outline" className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">
                                 {exp.type}
                               </Badge>
                             </div>
                           </div>
                           <div className="flex flex-col sm:items-end space-y-1 sm:space-y-2">
-                            <div className="flex items-center text-gray-400 text-xs sm:text-sm">
+                            <div className="flex items-center text-gray-600 dark:text-gray-400 text-xs sm:text-sm">
                               <Calendar className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                               {exp.period}
                             </div>
-                            <div className="flex items-center text-gray-400 text-xs sm:text-sm">
+                            <div className="flex items-center text-gray-600 dark:text-gray-400 text-xs sm:text-sm">
                               <MapPin className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                               {exp.location}
                             </div>
                           </div>
                         </div>
-                        <CardDescription className="text-gray-300 text-sm sm:text-base mt-2 sm:mt-4">
+                        <CardDescription className="text-gray-700 dark:text-gray-300 text-sm sm:text-base mt-2 sm:mt-4">
                           {exp.description}
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6">
                         <div>
-                          <h4 className="text-white font-semibold text-sm sm:text-base flex items-center">
+                          <h4 className="text-gray-900 dark:text-white font-semibold text-sm sm:text-base flex items-center">
                             <Target className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5 text-cyan-400" />
                             Key Achievements
                           </h4>
@@ -725,14 +875,14 @@ export default function AboutPage() {
                             {exp.achievements.map((achievement, achIndex) => (
                               <div key={achIndex} className="flex items-start space-x-1 sm:space-x-2">
                                 <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-400 mt-0.5 flex-shrink-0" />
-                                <span className="text-gray-300 text-sm">{achievement}</span>
+                                <span className="text-gray-700 dark:text-gray-300 text-sm">{achievement}</span>
                               </div>
                             ))}
                           </div>
                         </div>
 
                         <div className="bg-gradient-to-r from-cyan-500/10 to-purple-600/10 rounded-lg p-3 sm:p-4">
-                          <h4 className="text-white font-semibold text-sm sm:text-base flex items-center">
+                          <h4 className="text-gray-900 dark:text-white font-semibold text-sm sm:text-base flex items-center">
                             <TrendingUp className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5 text-green-400" />
                             Impact
                           </h4>
@@ -740,20 +890,20 @@ export default function AboutPage() {
                             {Object.entries(exp.impact).map(([key, value], impIndex) => (
                               <div key={impIndex} className="text-center">
                                 <div className="text-lg sm:text-xl font-bold text-cyan-400">{value}</div>
-                                <div className="text-xs sm:text-sm text-gray-400 capitalize">{key.replace("_", " ")}</div>
+                                <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 capitalize">{key.replace("_", " ")}</div>
                               </div>
                             ))}
                           </div>
                         </div>
 
                         <div>
-                          <h4 className="text-white font-semibold text-sm sm:text-base mb-2">Technologies Used</h4>
+                          <h4 className="text-gray-900 dark:text-white font-semibold text-sm sm:text-base mb-2">Technologies Used</h4>
                           <div className="flex flex-wrap gap-1 sm:gap-2">
                             {exp.technologies.map((tech, techIndex) => (
                               <Badge
                                 key={techIndex}
                                 variant="secondary"
-                                className="bg-gray-800 text-xs sm:text-sm text-gray-300 hover:bg-gray-800 hover:text-gray-300"
+                                className="bg-gray-200 dark:bg-gray-800 text-xs sm:text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700"
                               >
                                 {tech}
                               </Badge>
@@ -768,8 +918,8 @@ export default function AboutPage() {
 
               <TabsContent value="internships">
                 <div className="text-center mb-6 sm:mb-8">
-                  <h3 className="text-xl sm:text-2xl font-bold mb-2 text-white">Internships</h3>
-                  <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
+                  <h3 className="text-xl sm:text-2xl font-bold mb-2 text-gray-900 dark:text-white">Internships</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
                     Hands-on learning experiences that enhanced my technical skills.
                   </p>
                 </div>
@@ -777,40 +927,40 @@ export default function AboutPage() {
                   {internshipExperiences.map((exp, index) => (
                     <Card
                       key={index}
-                      className="bg-gray-900 border border-gray-800 hover:border-cyan-500 transition-all duration-300"
+                      className="bg-gradient-to-br from-cyan-50/50 via-white to-purple-50/50 dark:bg-none dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-cyan-500 transition-all duration-300"
                     >
                       <CardHeader className="p-4 sm:p-6">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
                           <div className="space-y-2">
-                            <CardTitle className="text-lg sm:text-xl text-white">{exp.title}</CardTitle>
+                            <CardTitle className="text-lg sm:text-xl text-gray-900 dark:text-white">{exp.title}</CardTitle>
                             <div className="flex items-center space-x-2 sm:space-x-4">
                               <div className="flex items-center text-cyan-400 font-medium">
                                 <Building className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                                 {exp.company}
                               </div>
-                              <Badge variant="outline" className="border-gray-600 text-xs sm:text-sm text-gray-300">
+                              <Badge variant="outline" className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">
                                 {exp.type}
                               </Badge>
                             </div>
                           </div>
                           <div className="flex flex-col sm:items-end space-y-1 sm:space-y-2">
-                            <div className="flex items-center text-gray-400 text-xs sm:text-sm">
+                            <div className="flex items-center text-gray-600 dark:text-gray-400 text-xs sm:text-sm">
                               <Calendar className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                               {exp.period}
                             </div>
-                            <div className="flex items-center text-gray-400 text-xs sm:text-sm">
+                            <div className="flex items-center text-gray-600 dark:text-gray-400 text-xs sm:text-sm">
                               <MapPin className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                               {exp.location}
                             </div>
                           </div>
                         </div>
-                        <CardDescription className="text-gray-300 text-sm sm:text-base mt-2 sm:mt-4">
+                        <CardDescription className="text-gray-700 dark:text-gray-300 text-sm sm:text-base mt-2 sm:mt-4">
                           {exp.description}
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6">
                         <div>
-                          <h4 className="text-white font-semibold text-sm sm:text-base flex items-center">
+                          <h4 className="text-gray-900 dark:text-white font-semibold text-sm sm:text-base flex items-center">
                             <Target className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5 text-cyan-400" />
                             Key Achievements
                           </h4>
@@ -818,14 +968,14 @@ export default function AboutPage() {
                             {exp.achievements.map((achievement, achIndex) => (
                               <div key={achIndex} className="flex items-start space-x-1 sm:space-x-2">
                                 <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-400 mt-0.5 flex-shrink-0" />
-                                <span className="text-gray-300 text-sm">{achievement}</span>
+                                <span className="text-gray-700 dark:text-gray-300 text-sm">{achievement}</span>
                               </div>
                             ))}
                           </div>
                         </div>
 
                         <div className="bg-gradient-to-r from-cyan-500/10 to-purple-600/10 rounded-lg p-3 sm:p-4">
-                          <h4 className="text-white font-semibold text-sm sm:text-base flex items-center">
+                          <h4 className="text-gray-900 dark:text-white font-semibold text-sm sm:text-base flex items-center">
                             <TrendingUp className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5 text-green-400" />
                             Impact
                           </h4>
@@ -833,20 +983,20 @@ export default function AboutPage() {
                             {Object.entries(exp.impact).map(([key, value], impIndex) => (
                               <div key={impIndex} className="text-center">
                                 <div className="text-lg sm:text-xl font-bold text-cyan-400">{value}</div>
-                                <div className="text-xs sm:text-sm text-gray-400 capitalize">{key.replace("_", " ")}</div>
+                                <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 capitalize">{key.replace("_", " ")}</div>
                               </div>
                             ))}
                           </div>
                         </div>
 
                         <div>
-                          <h4 className="text-white font-semibold text-sm sm:text-base mb-2">Technologies Used</h4>
+                          <h4 className="text-gray-900 dark:text-white font-semibold text-sm sm:text-base mb-2">Technologies Used</h4>
                           <div className="flex flex-wrap gap-1 sm:gap-2">
                             {exp.technologies.map((tech, techIndex) => (
                               <Badge
                                 key={techIndex}
                                 variant="secondary"
-                                className="bg-gray-800 text-xs sm:text-sm text-gray-300 hover:bg-gray-800 hover:text-gray-300"
+                                className="bg-gray-200 dark:bg-gray-800 text-xs sm:text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700"
                               >
                                 {tech}
                               </Badge>
@@ -861,19 +1011,19 @@ export default function AboutPage() {
 
               <TabsContent value="extracurricular">
                 <div className="text-center mb-6 sm:mb-8">
-                  <h3 className="text-xl sm:text-2xl font-bold mb-2 text-white">Extracurricular Activities & Leadership Roles</h3>
-                  <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
+                  <h3 className="text-xl sm:text-2xl font-bold mb-2 text-gray-900 dark:text-white">Extracurricular Activities & Leadership Roles</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
                     Leadership and extracurricular engagements that built my holistic skills.
                   </p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   {extracurricular.map((act, index) => (
-                    <Card key={index} className="bg-gray-900 border border-gray-800 hover:border-cyan-500 transition-colors">
+                    <Card key={index} className="bg-gradient-to-br from-cyan-50/50 via-white to-purple-50/50 dark:bg-none dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-cyan-500 transition-colors">
                       <CardContent className="p-4 sm:p-6">
-                        <h4 className="text-sm sm:text-base font-semibold text-white mb-1 sm:mb-2">{act.title}</h4>
+                        <h4 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mb-1 sm:mb-2">{act.title}</h4>
                         <p className="text-cyan-400 font-medium text-xs sm:text-base mb-1 sm:mb-2">{act.issuer}</p>
-                        <p className="text-gray-400 text-xs sm:text-sm mb-1 sm:mb-2">{act.year || act.period}</p>
-                        <p className="text-gray-300 text-sm">{act.description}</p>
+                        <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm mb-1 sm:mb-2">{act.year || act.period}</p>
+                        <p className="text-gray-700 dark:text-gray-300 text-sm">{act.description}</p>
                       </CardContent>
                     </Card>
                   ))}
@@ -888,13 +1038,13 @@ export default function AboutPage() {
               <h2 className="text-2xl sm:text-3xl font-bold mb-2">
                 Education & <span className="text-cyan-400">Certifications</span>
               </h2>
-              <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
+              <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
                 Strong academic foundation and continuous learning through industry credentials
               </p>
             </div>
 
             <Tabs value={activeEducationTab} onValueChange={setActiveEducationTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 bg-gray-900 p-1 rounded-lg mb-4">
+              <TabsList className="grid w-full grid-cols-3 bg-gray-100 dark:bg-gray-900 p-1 rounded-lg mb-4">
                 <TabsTrigger
                   value="qualification"
                   className="rounded-md text-sm sm:text-base px-2 sm:px-4 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-purple-600"
@@ -917,18 +1067,18 @@ export default function AboutPage() {
 
               <TabsContent value="qualification">
                 <div className="text-center mb-6 sm:mb-8">
-                  <h3 className="text-xl sm:text-2xl font-bold mb-2 text-white">Qualification</h3>
-                  <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
+                  <h3 className="text-xl sm:text-2xl font-bold mb-2 text-gray-900 dark:text-white">Qualification</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
                     Academic degrees and formal education that shaped my foundation.
                   </p>
                 </div>
                 <div className="space-y-6">
                   {education.map((edu, index) => (
-                    <Card key={index} className="bg-gray-900 border border-gray-800">
+                    <Card key={index} className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
                       <CardHeader className="p-4 sm:p-6">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
                           <div>
-                            <CardTitle className="text-lg sm:text-xl text-white">{edu.degree}</CardTitle>
+                            <CardTitle className="text-lg sm:text-xl text-gray-900 dark:text-white">{edu.degree}</CardTitle>
                             <CardDescription className="text-cyan-400 font-medium text-base sm:text-lg mt-1">
                               {edu.institution}
                             </CardDescription>
@@ -939,11 +1089,11 @@ export default function AboutPage() {
                             </div>
                           </div>
                           <div className="flex flex-col sm:items-end space-y-1 sm:space-y-2">
-                            <div className="flex items-center text-gray-400 text-xs sm:text-sm">
+                            <div className="flex items-center text-gray-600 dark:text-gray-400 text-xs sm:text-sm">
                               <Calendar className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                               {edu.period}
                             </div>
-                            <div className="flex items-center text-gray-400 text-xs sm:text-sm">
+                            <div className="flex items-center text-gray-600 dark:text-gray-400 text-xs sm:text-sm">
                               <MapPin className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                               {edu.location}
                             </div>
@@ -952,13 +1102,13 @@ export default function AboutPage() {
                       </CardHeader>
                       <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6">
                         <div>
-                          <h4 className="text-white font-semibold text-sm sm:text-base mb-2">Relevant Coursework</h4>
+                          <h4 className="text-gray-900 dark:text-white font-semibold text-sm sm:text-base mb-2">Relevant Coursework</h4>
                           <div className="flex flex-wrap gap-1 sm:gap-2">
                             {edu.coursework.map((course, courseIndex) => (
                               <Badge
                                 key={courseIndex}
                                 variant="outline"
-                                className="border-gray-600 text-xs sm:text-sm text-gray-300"
+                                className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
                               >
                                 {course}
                               </Badge>
@@ -973,14 +1123,14 @@ export default function AboutPage() {
 
               <TabsContent value="certification">
                 <div className="text-center mb-6 sm:mb-8">
-                  <h3 className="text-xl sm:text-2xl font-bold mb-2 text-white">Certification</h3>
-                  <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
+                  <h3 className="text-xl sm:text-2xl font-bold mb-2 text-gray-900 dark:text-white">Certification</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
                     Industry-recognized certifications showcasing my expertise.
                   </p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   {certifications.map((cert, index) => (
-                    <Card key={index} className="bg-gray-900 border border-gray-800 hover:border-cyan-500 transition-colors">
+                    <Card key={index} className="bg-gradient-to-br from-cyan-50/50 via-white to-purple-50/50 dark:bg-none dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-cyan-500 transition-all duration-300 group h-full flex flex-col">
                       <CardContent className="p-4 sm:p-6">
                         <div className="flex items-start justify-between mb-2 sm:mb-4">
                           <div className="flex items-center space-x-2 sm:space-x-3">
@@ -990,13 +1140,13 @@ export default function AboutPage() {
                             <div>
                               <Badge
                                 variant="secondary"
-                                className="bg-gray-800 text-xs sm:text-sm text-gray-400 mb-1 sm:mb-2"
+                                className="bg-gray-200 dark:bg-gray-800 text-xs sm:text-sm text-gray-700 dark:text-gray-400 mb-1 sm:mb-2"
                               >
                                 {cert.level}
                               </Badge>
                             </div>
                           </div>
-                          <div className="text-right text-xs sm:text-sm text-gray-400">{cert.date}</div>
+                          <div className="text-right text-xs sm:text-sm text-gray-600 dark:text-gray-400">{cert.date}</div>
                         </div>
                         <div className="flex items-start space-x-4 mb-2 sm:mb-4">
                           {cert.photographUrl && (
@@ -1010,9 +1160,9 @@ export default function AboutPage() {
                             />
                           )}
                           <div>
-                            <h4 className="text-sm sm:text-base font-semibold text-white mb-1 sm:mb-2">{cert.name}</h4>
+                            <h4 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mb-1 sm:mb-2">{cert.name}</h4>
                             <p className="text-cyan-400 font-medium text-xs sm:text-base mb-1 sm:mb-2">{cert.issuer}</p>
-                            <p className="text-xs sm:text-sm text-gray-400 mb-1 sm:mb-2">
+                            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1 sm:mb-2">
                               ID: {cert.credentialId || "N/A"}
                               {cert.credentialUrl && cert.credentialUrl !== "N/A" && (
                                 <a
@@ -1033,7 +1183,7 @@ export default function AboutPage() {
                               key={skillIndex}
                               variant="outline"
                               className="border-gray-600 text-xs sm:text-sm text-gray-300"
-                              >
+                            >
                               {skill}
                             </Badge>
                           ))}
