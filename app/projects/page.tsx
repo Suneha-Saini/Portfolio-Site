@@ -287,7 +287,7 @@ export default function ProjectsPage() {
             <Card
               key={index}
               className="sticky w-full bg-gradient-to-br from-cyan-50 via-white to-purple-50 dark:bg-none dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-cyan-500 transition-all duration-300 group flex flex-col shadow-xl dark:shadow-sm"
-              style={{ top: `calc(100px + ${index * 20}px)` }}
+              style={{ top: `calc(100px + ${Math.min(index, 2) * 20}px)` }}
             >
               <CardHeader>
                 <div className={`flex items-center mb-2 ${selectedCategory !== "All" ? "justify-between" : "justify-center"}`}>
