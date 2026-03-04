@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Github, Linkedin, Mail, Download, ExternalLink, Code, Database, Brain, BarChart3, Paintbrush, Monitor, Settings2Icon } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { FadeIn } from "@/components/fade-in"
 
 export default function HomePage() {
   const skills = [
@@ -78,13 +79,13 @@ export default function HomePage() {
               <p className="text-xl text-gray-300 font-medium">Web Developer | Power Platform Developer</p>
             </div>
             <p className="text-lg text-gray-400 leading-relaxed max-w-2xl">
-Passionate about building innovative solutions that bridge business needs with modern technology. I specialize in React development, Power Platform, and Python development — crafting intelligent dashboards, automated workflows, data-driven applications, and user-friendly apps that enhance efficiency and deliver real business impact.
-</p>
+              Passionate about building innovative solutions that bridge business needs with modern technology. I specialize in React development, Power Platform, and Python development — crafting intelligent dashboards, automated workflows, data-driven applications, and user-friendly apps that enhance efficiency and deliver real business impact.
+            </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/Resume/Suneha-Saini-Resume.pdf" target="_blank" rel="noopener noreferrer">
                 <Button
                   size="lg"
-                  className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700"
+                  className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(168,85,247,0.4)]"
                 >
                   <Download className="mr-2 h-4 w-4" />
                   Download Resume
@@ -93,7 +94,7 @@ Passionate about building innovative solutions that bridge business needs with m
               <Button
                 variant="outline"
                 size="lg"
-                className="border-gray-600 text-white hover:bg-gray-800 bg-transparent"
+                className="border-gray-600 text-white hover:bg-gray-800 bg-transparent transition-all duration-300 hover:scale-105 hover:border-cyan-500 hover:shadow-[0_0_15px_rgba(34,211,238,0.2)]"
               >
                 <Mail className="mr-2 h-4 w-4" />
                 Get In Touch
@@ -111,15 +112,15 @@ Passionate about building innovative solutions that bridge business needs with m
               </Link>
             </div>
           </div>
-          <div className="relative mt-10">
+          <div className="relative mt-10 group cursor-default">
             <div className="relative w-full max-w-md mx-auto">
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl blur-2xl opacity-20"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-700"></div>
               <Image
                 src="/images/About.png"
                 alt="Suneha - Power Platform Developer"
                 width={400}
                 height={600}
-                className="relative rounded-2xl shadow-2xl"
+                className="relative rounded-2xl shadow-2xl drop-shadow-[0_0_15px_rgba(34,211,238,0.1)] group-hover:-translate-y-2 group-hover:drop-shadow-[0_0_25px_rgba(34,211,238,0.3)] transition-all duration-700"
                 priority
               />
             </div>
@@ -128,8 +129,8 @@ Passionate about building innovative solutions that bridge business needs with m
       </section>
 
       {/* Skills Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <FadeIn className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
               Skills & <span className="text-cyan-400">Expertise</span>
@@ -154,12 +155,12 @@ Passionate about building innovative solutions that bridge business needs with m
               )
             })}
           </div>
-        </div>
+        </FadeIn>
       </section>
 
       {/* Project Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-950">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-950 overflow-hidden">
+        <FadeIn className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
               Featured <span className="text-cyan-400">Projects</span>
@@ -223,12 +224,12 @@ Passionate about building innovative solutions that bridge business needs with m
               </Button>
             </Link>
           </div>
-        </div>
+        </FadeIn>
       </section>
 
       {/* Contact Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <FadeIn className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
               Let's <span className="text-cyan-400">Connect</span>
@@ -283,7 +284,7 @@ Passionate about building innovative solutions that bridge business needs with m
               </form>
             </CardContent>
           </Card>
-        </div>
+        </FadeIn>
       </section>
     </div>
   )

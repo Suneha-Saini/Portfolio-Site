@@ -146,7 +146,7 @@ export default function Navbar() {
   ]
 
   return (
-    <nav className="fixed top-0 w-full bg-black/90 backdrop-blur-sm border-b border-gray-800 z-50">
+    <nav className="fixed top-0 w-full bg-black/90 backdrop-blur-md border-b border-gray-800/50 z-50 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
@@ -169,7 +169,7 @@ export default function Navbar() {
                   key={item.name}
                   href={item.href}
                   className={cn(
-                    "px-3 py-2 text-sm font-medium transition-colors hover:text-cyan-400",
+                    "px-3 py-2 text-base font-medium transition-all duration-300 hover:text-cyan-400 hover:scale-[1.05] inline-block",
                     pathname === item.href ? "text-cyan-400" : "text-gray-300",
                   )}
                 >
@@ -180,12 +180,12 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Social Links */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-5">
             <a
               href="https://github.com/Suneha-Saini"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-cyan-400 transition-colors"
+              className="text-gray-400 hover:text-cyan-400 transition-all duration-300 hover:scale-110"
             >
               <Github className="h-5 w-5" />
             </a>
@@ -193,7 +193,7 @@ export default function Navbar() {
               href="https://www.linkedin.com/in/suneha-saini"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-cyan-400 transition-colors"
+              className="text-gray-400 hover:text-cyan-400 transition-all duration-300 hover:scale-110"
             >
               <Linkedin className="h-5 w-5" />
             </a>
@@ -201,7 +201,7 @@ export default function Navbar() {
               href="mailto:er.sunehasaini@gmail.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-cyan-400 transition-colors"
+              className="text-gray-400 hover:text-cyan-400 transition-all duration-300 hover:scale-110"
             >
               <Mail className="h-5 w-5" />
             </a>
